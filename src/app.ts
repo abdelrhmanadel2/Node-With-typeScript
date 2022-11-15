@@ -1,9 +1,10 @@
-import express, { Application } from "express";
+import express, { Application, Response, Request } from "express";
 import helmet from "helmet";
 import morgan from "morgan";
-import rateLimit from "express-rate-limit";
+import errorMiddelware from "./middlewares/erorr.middleware";
+import RateLimit from "express-rate-limit";
+import config from "./config/config";
 const app: Application = express();
-
 // Middlewares
 // http logger
 app.use(morgan("common"));
@@ -15,7 +16,7 @@ app.use(express.json());
 // use this for auth
 app.use(
   "/auth",
-  rateLimit({
+  RateLimit({
     windowMs: 5 * 60 * 1000, // 15 minutes
     max: 5, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
     standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
@@ -23,7 +24,17 @@ app.use(
     message: "Too many requests , please try agian after 5 minutes",
   })
 );
+app.get("/auth", (_req: Request, res: Response) => {
+  throw new Error("error");
+});
+// unknown route
+app.use((_req: Request, res: Response) => {
+  res.status(400).json({ message: "Ohh you are lost." });
+});
+
+// error middlewear
+app.use(errorMiddelware);
 // console.log("Hello Server")
-app.listen(3000, () => {
-  console.log("Server listen to port 3000");
+app.listen(config.port || 4800, () => {
+  console.log(`Server listen to port ${config.port}`);
 });
