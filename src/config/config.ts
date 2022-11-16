@@ -10,7 +10,7 @@ const {
   MAIL_EMAIL,
 } = process.env;
 export default {
-  dataBaseUrl: DB_URI,
+  dataBaseUrl: DB_URI!,
   dataBaseName: DB_NS,
   secret,
   port: PORT,

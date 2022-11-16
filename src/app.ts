@@ -4,6 +4,8 @@ import morgan from "morgan";
 import errorMiddelware from "./middlewares/erorr.middleware";
 import RateLimit from "express-rate-limit";
 import config from "./config/config";
+import routes from "./routes";
+
 const app: Application = express();
 // Middlewares
 // http logger
@@ -24,6 +26,10 @@ app.use(
     message: "Too many requests , please try agian after 5 minutes",
   })
 );
+
+// Routes
+app.use("/api/v1", routes);
+
 app.get("/auth", (_req: Request, res: Response) => {
   throw new Error("error");
 });
