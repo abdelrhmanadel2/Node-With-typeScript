@@ -879,6 +879,11 @@
   resolved "https://registry.npmjs.org/@types/json-schema/-/json-schema-7.0.11.tgz"
   integrity sha512-wOuvG1SN4Us4rez+tylwwwCV1psiNVOkJeM3AUWUNWg/jDQY2+HE/444y5gc+jBmRqASOm2Oeh5c1axHobwRKQ==
 
+"@types/locale@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.npmjs.org/@types/locale/-/locale-0.1.1.tgz"
+  integrity sha512-BgFL2Ik6SnDPM2RQOwMH0HiBKiooVHNSc4KM+yoS39g1KGIyhYOK9Xvckwhu11m6lc3dK/vLnE/Suy8XGJ2jmw==
+
 "@types/mime@*":
   version "3.0.1"
   resolved "https://registry.npmjs.org/@types/mime/-/mime-3.0.1.tgz"
@@ -1856,6 +1861,11 @@ levn@^0.4.1:
   dependencies:
     prelude-ls "^1.2.1"
     type-check "~0.4.0"
+
+locale@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.npmjs.org/locale/-/locale-0.1.0.tgz"
+  integrity sha512-rY3ZMnUkMfaZEix1fp/pjdwsHJkDQcE0UEcXHuYI77J03K8gddL3iD+UuJCLAmT2Z2oz5A70/0QS4J9OLCCvXw==
 
 locate-path@^6.0.0:
   version "6.0.0"

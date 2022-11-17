@@ -1,3 +1,4 @@
+import locale from "locale";
 import express, { Application, Response, Request } from "express";
 import helmet from "helmet";
 import morgan from "morgan";
@@ -6,6 +7,8 @@ import RateLimit from "express-rate-limit";
 import config from "./config/config";
 import routes from "./routes";
 
+const supported = ["en", "en_US", "ar"];
+const defaultLang = "en";
 const app: Application = express();
 // Middlewares
 // http logger
@@ -14,6 +17,23 @@ app.use(morgan("common"));
 app.use(helmet());
 // json parser
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+// local middleware
+app.use(locale(supported, defaultLang));
+app.use((req: Request, res: Response, next) => {
+  // This reads the accept-language header
+  // and returns the language if found or false if not
+  const lang = req.acceptsLanguages(supported);
+  if (lang) {
+    // if found, attach it as property to the request
+    req.locale = lang;
+  } else {
+    // else set the default language
+    req.locale = "en";
+  }
+  next();
+});
+
 // apply the Rate Limiting middleware to spesific requests
 // use this for auth
 app.use(
@@ -28,11 +48,9 @@ app.use(
 );
 
 // Routes
+
 app.use("/api/v1", routes);
 
-app.get("/auth", (_req: Request, res: Response) => {
-  throw new Error("error");
-});
 // unknown route
 app.use((_req: Request, res: Response) => {
   res.status(400).json({ message: "Ohh you are lost." });

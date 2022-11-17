@@ -12,7 +12,7 @@ import {
 
 class MainProjectsModel {
   // create
-  async create(p: MainProject): Promise<MainProject> {
+  async create(p: MainProject, locale: string): Promise<MainProject> {
     let clintMongo;
     try {
       // open connection with DB
@@ -37,8 +37,14 @@ class MainProjectsModel {
       if (clintMongo) clintMongo.close();
       errorThrower({
         err: error as MongoServerError,
-        dublicationMessage: `Unable to create project  (${p.name}) due project code duplication`,
-        customMessage: `Unable to create project  (${p.name})`,
+        dublicationMessage:
+          locale == "ar"
+            ? `لا يمكن تسجيل هذا المشروع (${p.name}) بسبب تكرار الكود `
+            : `Unable to create project  (${p.name}) due project code duplication`,
+        customMessage:
+          locale == "ar"
+            ? `لا يمكن تسجيل هذا المشروع (${p.name})`
+            : `Unable to create project  (${p.name})`,
       });
     }
   }

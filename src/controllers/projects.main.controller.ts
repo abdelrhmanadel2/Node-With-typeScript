@@ -20,7 +20,6 @@ export const create = async (
 ) => {
   try {
     // add validation here
-
     const errors = validationResult(req);
     console.log(`error: ${!errors.isEmpty()}`);
     if (!errors.isEmpty()) {
@@ -29,10 +28,13 @@ export const create = async (
       return res.status(400).json({ status: 400, message: errMessage });
     }
     // make req
-    const project = await projectsModel.create(req.body);
+    const project = await projectsModel.create(req.body, req.locale);
     res.json({
-      status: "Success",
-      message: "Project Created Successfully",
+      status: req.locale == "ar" ? "نجحت العملية" : "Success",
+      message:
+        req.locale == "ar"
+          ? "تم اضافه المشروع بنجاح"
+          : "Project Created Successfully",
       data: { ...project },
     });
   } catch (err) {
