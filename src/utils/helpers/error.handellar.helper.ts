@@ -4,8 +4,8 @@ export function errorThrower(e: {
   dublicationMessage?: string;
   customMessage?: string;
 }): never {
-  let error = new Error();
   if (e.err.message == "Document failed validation") {
+    let error = new Error();
     error.message = e.err.message;
     error.name = "ValidationError";
     throw error;
