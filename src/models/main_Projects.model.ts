@@ -1,7 +1,14 @@
 import MainProject from "../types/main_project.type";
 import { connectToCluster } from "../database/connect_to.db";
 import config from "../config/config";
-import { Collection, ObjectId } from "mongodb";
+import { errorThrower } from "../utils/helpers/error.handellar.helper";
+import {
+  AnyError,
+  Collection,
+  InsertOneResult,
+  MongoServerError,
+  ObjectId,
+} from "mongodb";
 
 class MainProjectsModel {
   // create
@@ -12,14 +19,14 @@ class MainProjectsModel {
       let { clint, db } = await connectToCluster(config.dataBaseUrl);
       clintMongo = clint;
       // run query
-      let projectCollection = db.collection("mianProjects");
+      let projectCollection = db.collection("mainprojects");
       const session = clintMongo.startSession();
       session.startTransaction();
-
-      let doc = await projectCollection.insertOne({ ...p });
-      console.log(`doc id = ${doc.insertedId}`);
+      // add project with keys ex{"name":p.name}
+      let doc = await this.insertOne(p, projectCollection);
+      // console.log(`doc id = ${doc.insertedId}`);
       let newProject = await this.findByID(
-        doc.insertedId.toString(),
+        doc!.insertedId.toString(),
         projectCollection
       );
       if (newProject == null) throw new Error();
@@ -28,7 +35,11 @@ class MainProjectsModel {
       // close connection
     } catch (error) {
       if (clintMongo) clintMongo.close();
-      throw new Error(`Unable to create (${p.name})`);
+      errorThrower({
+        err: error as MongoServerError,
+        dublicationMessage: `Unable to create project  (${p.name}) due project code duplication`,
+        customMessage: `Unable to create project  (${p.name})`,
+      });
     }
   }
 
@@ -41,7 +52,7 @@ class MainProjectsModel {
       let { clint, db } = await connectToCluster(config.dataBaseUrl);
       clintMongo = clint;
       // run query
-      let projectCollection = db.collection("mianProjects");
+      let projectCollection = db.collection("mainprojects");
 
       let newProject = await projectCollection.findOne<MainProject>({
         _id: new ObjectId(id),
@@ -51,9 +62,22 @@ class MainProjectsModel {
       return newProject;
     } catch (error) {
       if (clintMongo) clintMongo.close();
-      throw new Error(`Unable to find project with id:(${id})`);
+      errorThrower({
+        err: error as MongoServerError,
+        customMessage: `Unable to find project with id:(${id})`,
+      });
     }
   }
+
+  async insertOne(
+    p: MainProject,
+    collection: Collection
+  ): Promise<InsertOneResult<Document> | null> {
+    let newProject = await collection.insertOne({ ...p });
+    return newProject;
+  }
+  // update Project
+  // delete Project
 
   async findByID(
     id: string,

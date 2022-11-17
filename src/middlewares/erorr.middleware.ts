@@ -9,21 +9,15 @@ function errorMiddleware(
   res: Response,
   next: NextFunction
 ) {
-  //   if (typeof err === "string") {
-  //     // custom application error
-  //     return res.status(400).json({ message: err });
-  //   }
-
-  //   if (err.name === "ValidationError") {
-  //     // mongoose validation error
-  //     return res.status(400).json({ message: err.message });
-  //   }
-
+  if (err.name === "ValidationError") {
+    // mongoose validation error
+    return res.status(400).json({ status: 400, message: err.message });
+  }
   const status = err.status || 500;
   const message = err.message || "Whoops!! something went wrong";
   if (err.name === "UnauthorizedError") {
     // jwt authentication error
-    return res.status(401).json({ message: "Invalid Token" });
+    return res.status(401).json({ status: 401, message: "Invalid Token" });
   }
   // default to 500 server error
   return res.status(status).json({ status, message });
