@@ -10,21 +10,7 @@ export async function createProject(
   locale: string
 ) {
   try {
-    return MainprojectModel.create(input, function (err, res) {
-      if (err) {
-        throw errorThrower({
-          err: err,
-          dublicationMessage:
-            locale == "ar"
-              ? `لا يمكن تسجيل هذا المشروع (${input.name}) بسبب تكرار الكود `
-              : `Unable to create project  (${input.name}) due duplication `,
-          customMessage:
-            locale == "ar"
-              ? `لا يمكن تسجيل هذا المشروع (${input.name})`
-              : `Unable to create project  (${input.name})`,
-        });
-      }
-    });
+    return await MainprojectModel.create(input);
   } catch (error) {
     let err = error as MongoServerError;
     console.error("error:", err);

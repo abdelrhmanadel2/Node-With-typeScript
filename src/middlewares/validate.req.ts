@@ -1,20 +1,28 @@
 import { NextFunction, Response, Request } from "express";
-import { validationResult } from "express-validator";
+import { AnyZodObject, ZodError } from "zod";
 
 export const validate =
-  (validator: () => any) =>
+  (schema: AnyZodObject) =>
   (req: Request, res: Response, next: NextFunction) => {
-    validator();
-
-    const errors = validationResult(req);
-    console.log(`error: ${!errors.isEmpty()}`);
-    if (!errors.isEmpty()) {
+    try {
+      schema.parse({
+        body: req.body,
+        query: req.query,
+        params: req.params,
+      });
+      next();
+    } catch (errors) {
+      const error = errors as ZodError;
       let errMessage = "";
-      errors.array().map((e) => (errMessage += `${e.param} :  ${e.msg} \n`));
-      console.error(`err : ${errMessage}`);
+      error.errors.map(
+        (e) =>
+          (errMessage += `${e.path.toString().split(",")[1]} :  ${
+            e.message
+          } \n`)
+      );
+      console.error(`${errMessage}`);
       const err = new Error(errMessage);
       err.name = "ValidationError";
       next(err);
     }
-    next();
   };

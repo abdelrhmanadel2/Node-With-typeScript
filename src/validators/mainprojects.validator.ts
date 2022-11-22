@@ -1,25 +1,27 @@
-import { body, oneOf, check } from "express-validator";
+import { object, string, TypeOf } from "zod";
+export const MainProjectSchema = object({
+  body: object({
+    code: string({
+      required_error: "Project code is required",
+      invalid_type_error: "Project code must be String",
+    }),
+    contract: string({
+      required_error: "Project contract is required",
+      invalid_type_error: "Project contract must be String",
+    }),
+    name: string({
+      required_error: "Project name is required",
+      invalid_type_error: "Project name must be String",
+    }),
+    type: string({
+      required_error: "Project type is required",
+      invalid_type_error: "Project type must be either Fraame or Frarmeless",
+    }),
+    line: string({
+      required_error: "Project libe is required",
+      invalid_type_error: "line must be String",
+    }),
+  }),
+});
 
-export function createProjectValidator() {
-  check("contract", "Contract must be provided").exists();
-  check("name")
-    .exists()
-    .isString()
-    .withMessage("Project name must be String")
-    .notEmpty()
-    .withMessage("Project name must be provided");
-
-  check("type")
-    .exists()
-    .notEmpty()
-    .withMessage("type must be provided")
-    .isString()
-    .withMessage("Project name must be either Fraame or Frarmeless");
-
-  check("line")
-    .exists()
-    .notEmpty()
-    .withMessage("line must be provided")
-    .isString()
-    .withMessage("line must be String");
-}
+export type createProjectInput = TypeOf<typeof MainProjectSchema>;
